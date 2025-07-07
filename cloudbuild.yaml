@@ -1,17 +1,12 @@
 substitutions:
-  _IMAGE: 'sheet-updater-image' # 作成するコンテナイメージ名
-  _JOB_NAME: 'sheet-updater-job' # 作成・更新するCloud Runジョブ名
-  _REGION: 'asia-northeast1'      # あなたのリージョン
+  _IMAGE: 'sheet-updater-image'
+  _JOB_NAME: 'sheet-updater-job'
+  _REGION: 'asia-northeast1'
 steps:
-# 1. Dockerfileを使ってコンテナイメージをビルドする
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_IMAGE', 'sheet_updater'] # sheet_updater フォルダをビルド対象にする
-
-# 2. ビルドしたイメージをGoogle Container Registryにプッシュ（保存）する
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_IMAGE', 'sheet_updater']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/$_IMAGE']
-
-# 3. イメージをCloud Runジョブとしてデプロイ（更新）し、即時実行する
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
   args:
@@ -23,6 +18,8 @@ steps:
   - 'gcr.io/$PROJECT_ID/$_IMAGE'
   - '--region'
   - '$_REGION'
-  - '--execute-now' # この行がデプロイ後の即時実行を指示
+  - '--execute-now'
 images:
 - gcr.io/$PROJECT_ID/$_IMAGE
+options:
+  logging: 'CLOUD_LOGGING_ONLY'
