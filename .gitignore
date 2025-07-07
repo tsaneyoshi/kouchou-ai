@@ -10,3 +10,6 @@ docker-compose.override.y*ml
 out
 lefthook-local.yml
 dist
+
+# Service account key for sheet updater
+/sheet_updater/service_account.json
