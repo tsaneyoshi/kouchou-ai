@@ -1,7 +1,7 @@
 substitutions:
   _IMAGE: 'sheet-updater-image'
   _JOB_NAME: 'sheet-updater-job'
-  _REGION: 'global'
+  _REGION: 'asia-northeast1'
 steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_IMAGE', 'sheet_updater']
