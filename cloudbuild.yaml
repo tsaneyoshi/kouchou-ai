@@ -3,10 +3,25 @@ substitutions:
   _JOB_NAME: 'sheet-updater-job'
   _REGION: 'asia-northeast1'
 steps:
+# --- このデバッグ用ステップを追加 ---
+- name: 'gcr.io/cloud-builders/gcloud'
+  entrypoint: 'bash'
+  args:
+  - '-c'
+  - |
+    echo "--- Listing all files in repository root ---"
+    ls -R
+# ------------------------------------
+
+# 1. Dockerfileを使ってコンテナイメージをビルドする
 - name: 'gcr.io/cloud-builders/docker'
   args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_IMAGE', '.']
+
+# 2. ビルドしたイメージをGoogle Container Registryにプッシュ（保存）する
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/$_IMAGE']
+
+# 3. イメージをCloud Runジョブとしてデプロイ（更新）し、秘密の鍵を設定し、即時実行する
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
   entrypoint: gcloud
   args:
@@ -18,8 +33,9 @@ steps:
   - 'gcr.io/$PROJECT_ID/$_IMAGE'
   - '--region'
   - '$_REGION'
+  - '--set-secrets=/app/service_account.json=sheet-updater-key:latest'
   - '--execute-now'
 images:
 - gcr.io/$PROJECT_ID/$_IMAGE
 options:
-  logging: 'CLOUD_LOGGING_ONLY'
+  logging: CLOUD_LOGGING_ONLY
