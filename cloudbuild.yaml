@@ -24,7 +24,8 @@ steps:
   # 認証ファイルのパスを環境変数に設定
   - '--set-env-vars=GOOGLE_APPLICATION_CREDENTIALS=/secrets/service_account.json'
   # Gemini APIキーを Secret Manager から環境変数として渡す
-  - '--set-secrets=GOOGLE_AI_API_KEY=projects/moriya365/secrets/your-gemini-key:latest'
+  - '--set-secrets=projects/moriya365/secrets/your-gemini-key:latest'
+  - '--set-env-vars=GOOGLE_AI_API_KEY=projects/moriya365/secrets/your-gemini-key:latest'
   # デプロイ後にジョブを即実行
   - '--execute-now'
 
