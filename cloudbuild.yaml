@@ -7,9 +7,9 @@ steps:
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/moriya365/sheet-updater-image:latest']
 
-# 3. 「:latest」タグが付いたイメージを、具体的な名前でジョブにデプロイする
+# 3. ジョブをデプロイして即時実行
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
-  entrypoint: gcloud
+  entrypoint: 'gcloud'
   args:
   - 'run'
   - 'jobs'
@@ -19,7 +19,14 @@ steps:
   - 'gcr.io/moriya365/sheet-updater-image:latest'
   - '--region'
   - 'asia-northeast1'
-  - '--set-secrets=/app/service_account.json=sheet-updater-key:latest'
+  # Secret を /secrets/service_account.json にマウント
+  - '--set-secrets=/secrets/service_account.json=sheet-updater-key:latest'
+  # 環境変数にキーの場所を渡す
+  - '--set-env-vars=GOOGLE_APPLICATION_CREDENTIALS=/secrets/service_account.json'
+  # もし Gemini API キーも Secret にしている場合は以下を追加
+  # - '--set-secrets=GOOGLE_AI_API_KEY=your-gemini-key-secret:latest'
+  # - '--set-env-vars=GOOGLE_AI_API_KEY=/etc/secrets/GOOGLE_AI_API_KEY'
   - '--execute-now'
+
 options:
   logging: CLOUD_LOGGING_ONLY
