@@ -6,7 +6,8 @@ COPY sheet_updater/requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY sheet_updater/main.py .
 
-# この行を追加して、/appフォルダの中身をすべて表示させる
+# ビルド時の確認用。完成後は外してOKです
 RUN ls -R /app
 
-CMD ["python", "main.py"]
+# ここを CMD ではなく ENTRYPOINT にして、常に /app/main.py を実行する
+ENTRYPOINT ["python", "/app/main.py"]
