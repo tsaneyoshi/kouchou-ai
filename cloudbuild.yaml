@@ -4,7 +4,7 @@ substitutions:
   _REGION: 'asia-northeast1'
 steps:
 - name: 'gcr.io/cloud-builders/docker'
-  args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_IMAGE', '-f', 'sheet_updater/Dockerfile', '.']
+  args: ['build', '-t', 'gcr.io/$PROJECT_ID/$_IMAGE', '.']
 - name: 'gcr.io/cloud-builders/docker'
   args: ['push', 'gcr.io/$PROJECT_ID/$_IMAGE']
 - name: 'gcr.io/google.com/cloudsdktool/cloud-sdk'
