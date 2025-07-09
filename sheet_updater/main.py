@@ -100,14 +100,18 @@ def main():
         all_rows = source_worksheet.get_all_values()
         rows_processed = False
         for i, row in enumerate(all_rows, 1):
-            if i == 1:
+            if i == 1: # ヘッダー行をスキップ
                 continue
-            if len(row) >= 3 and row[2] == '2':
-                comment = row[1]
+            # len(row) >= 3 は引き続きコメント(row[1])とC列(row[2])へのアクセスを保証
+            # しかし、画像を見るとD列に"2"が書かれているので、row[3] == '2'に変更
+            # また、D列とE列に書き込むため、最低5列分のデータがあるか確認する(len(row) >= 5)
+            # または、書き込み時に列が足りなければ自動で追加されることもあるが、明確にしておく
+            if len(row) >= 4 and row[3] == '2': # D列 (row[3]) が '2' の場合を判定条件に
+                comment = row[2] # コメントはC列 (row[2]) に移動
                 print(f"Processing row {i}: '{comment[:50]}...'")
                 ai_judgement, ai_reason = get_ai_judgement(prompt_template, comment)
-                source_worksheet.update_cell(i, 3, ai_judgement)
-                source_worksheet.update_cell(i, 4, ai_reason)
+                source_worksheet.update_cell(i, 4, ai_judgement) # D列 (Col4) に判定を書き込み
+                source_worksheet.update_cell(i, 5, ai_reason)   # E列 (Col5) に理由を書き込み
                 print(f"Row {i} updated: {ai_judgement}, reason: {ai_reason}")
                 rows_processed = True
         if not rows_processed:
